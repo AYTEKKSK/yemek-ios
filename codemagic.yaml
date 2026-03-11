@@ -1,0 +1,44 @@
+workflows:
+  ios-workflow:
+    name: iOS PWA Build
+
+    environment:
+      xcode: latest
+
+    scripts:
+      - name: Prepare project
+        script: |
+          mkdir build
+          mkdir -p build/Payload
+
+      - name: Create simple iOS wrapper
+        script: |
+          mkdir ios
+          cd ios
+
+          cat <<EOF > Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+          <key>CFBundleDisplayName</key>
+          <string>Yemek</string>
+          <key>CFBundleIdentifier</key>
+          <string>online.artinc.yemek</string>
+          <key>CFBundleVersion</key>
+          <string>1</string>
+          <key>CFBundleShortVersionString</key>
+          <string>1.0</string>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Build IPA
+        script: |
+          mkdir -p build/Payload/Yemek.app
+          cp -r Yemek/* build/Payload/Yemek.app/
+          cd build
+          zip -r yemek.ipa Payload
+
+    artifacts:
+      - build/yemek.ipa
